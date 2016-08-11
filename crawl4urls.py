@@ -18,6 +18,8 @@ headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleW
 
 
 def fetch_page(url):
+    """This function takes care of page download, given the URL as argument,
+    paying attention to space out successive hits against same domain."""
     try:
         while time() < domain_hit_time.setdefault(url, 0) + MIN_HIT_DELAY:
             sleep(MIN_HIT_DELAY*0.5)
@@ -35,6 +37,7 @@ def fetch_page(url):
 
 
 def fetch_html_elem_tree(url):
+    """Wraps *safe* lxml element tree extraction, returning None if not possible"""
     page = fetch_page(url)
     if page is None: return
     
@@ -67,6 +70,9 @@ class crawl4urls(object):
 
 
     def proc_link(self, url, parent_url):
+        """Prints a LinkedIn profile URL, if found and decides whether
+        to add the link to a list of pages into which to descend 
+        as part of the crawl"""
         # Unique new LinkedIn url found:
         if 'linkedin.com/in/' in url and url not in self.linkedin_urls_seen:
             print '\rLinked in profile found:', url
@@ -85,6 +91,8 @@ class crawl4urls(object):
 
 
     def proc_page(self, url):
+        """Process one page - fetching its HTML element tree 
+        and looping through the found <a> tags"""
         print ('\x1b[2K\rfound: %d  lev: %d  Parsing' \
                    % (len(self.linkedin_urls_seen), self.cur_level)), url[:100],
         sys.stdout.flush()
@@ -98,6 +106,8 @@ class crawl4urls(object):
     
 
     def proc_1_level(self):
+        """Loop through on tree level of pages, 
+        previously queued for processing"""
         self.cur_level = min(self.level_qs.keys())
         cur_q = self.level_qs.pop(self.cur_level, Queue())
         while not cur_q.empty():
