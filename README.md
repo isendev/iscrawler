@@ -14,5 +14,12 @@ Simple crawler to find LinkedIn profile URLs
   server response time, parallel crawling with multiple threads/machines 
   would be ideal. Celery is one possible choice in the next step to parallelization.
   
+## Use
+
+After downloading code, simply run:
+`python crawl4urls.py`
+
+The base URL is hardwired, for simplicity, as are some other parameters, but these could easily be made configurable.
+
 
 
